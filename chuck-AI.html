@@ -17,7 +17,6 @@
             padding: 10px;
             width: 80%;
             margin: 20px;
-            border: none;
             border-radius: 10px;
             outline: none;
         }
@@ -44,6 +43,7 @@
 <p>Your Personal AI Assistant</p>
 <input type="text" id="command" placeholder="Ask me anything Boss...">
 <button onclick="askChuck()">Ask</button>
+<button onclick="startListening()">🎙️ Voice Command</button>
 <div id="response"></div>
 
 <script>
@@ -59,6 +59,23 @@
         });
         const data = await response.json();
         responseDiv.innerText = data.response;
+        speak(data.response);
+    }
+
+    function speak(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function startListening() {
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+        recognition.start();
+        recognition.onresult = function(event) {
+            const command = event.results[0][0].transcript;
+            document.getElementById("command").value = command;
+            askChuck();
+        };
     }
 </script>
 </body>
