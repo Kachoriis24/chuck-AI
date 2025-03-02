@@ -39,7 +39,7 @@
     </style>
 </head>
 <body>
-<h1>🔥 Chuck AI v7.0 🔥</h1>
+<h1>🔥 Chuck AI v8.0 🔥</h1>
 <p>Your Personal AI Assistant</p>
 <input type="text" id="command" placeholder="Ask me anything Boss...">
 <button onclick="askChuck()">Ask</button>
@@ -52,14 +52,26 @@
         const responseDiv = document.getElementById("response");
         responseDiv.innerText = "Chuck is thinking...";
 
-        const response = await fetch('/ask', {
+        const apiKey = "YOUR_OPENAI_API_KEY_HERE"; 
+        const endpoint = "https://api.openai.com/v1/chat/completions";
+
+        const response = await fetch(endpoint, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ command: command })
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: "gpt-3.5-turbo",
+                messages: [{ role: "user", content: command }],
+                max_tokens: 100
+            })
         });
+
         const data = await response.json();
-        responseDiv.innerText = data.response;
-        speak(data.response);
+        const reply = data.choices[0].message.content;
+        responseDiv.innerText = reply;
+        speak(reply);
     }
 
     function speak(text) {
