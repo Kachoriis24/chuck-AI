@@ -47,8 +47,8 @@
     </style>
 </head>
 <body>
-<h1>🔥 Chuck AI v8.0 🔥</h1>
-<p>Your Personal AI Assistant</p>
+<h1>🔥 Chuck AI v9.0 🔥</h1>
+<p>Your Self-Learning AI Assistant</p>
 <input type="text" id="command" placeholder="Ask me anything Boss...">
 <button onclick="askChuck()">Ask</button>
 <div id="response"></div>
@@ -71,9 +71,9 @@
                     'Authorization': `Bearer ${apiKey}`
                 },
                 body: JSON.stringify({
-                    model: "gpt-3.5-turbo",
+                    model: "gpt-4-turbo",
                     messages: [{ role: "user", content: command }],
-                    max_tokens: 100
+                    max_tokens: 200
                 })
             });
 
@@ -83,9 +83,9 @@
             responseDiv.classList.remove("thinking");
             speak(reply);
         } catch (error) {
-            responseDiv.innerText = "Chuck is offline... Please wait, I will reconnect automatically.";
+            responseDiv.innerText = "Chuck is offline... Auto reconnecting...";
             responseDiv.classList.remove("thinking");
-            setTimeout(startListening, 5000); // Automatic reconnect after 5 seconds
+            setTimeout(startListening, 5000);
         }
     }
 
@@ -104,12 +104,13 @@
             askChuck();
         };
         recognition.onend = function() {
-            setTimeout(startListening, 1000); // Auto restart voice listening
+            setTimeout(startListening, 1000);
         };
     }
 
     window.onload = function() {
         startListening();
+        speak("Hello Boss... Chuck AI v9.0 Activated");
     }
 </script>
 </body>
