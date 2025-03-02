@@ -36,6 +36,14 @@
             margin-top: 20px;
             font-size: 18px;
         }
+        .thinking {
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -43,7 +51,6 @@
 <p>Your Personal AI Assistant</p>
 <input type="text" id="command" placeholder="Ask me anything Boss...">
 <button onclick="askChuck()">Ask</button>
-<button onclick="startListening()">🎙️ Voice Command</button>
 <div id="response"></div>
 
 <script>
@@ -51,27 +58,34 @@
         const command = document.getElementById("command").value;
         const responseDiv = document.getElementById("response");
         responseDiv.innerText = "Chuck is thinking...";
+        responseDiv.classList.add("thinking");
 
         const apiKey = "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"; 
         const endpoint = "https://api.openai.com/v1/chat/completions";
 
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({
-                model: "gpt-3.5-turbo",
-                messages: [{ role: "user", content: command }],
-                max_tokens: 100
-            })
-        });
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: "gpt-3.5-turbo",
+                    messages: [{ role: "user", content: command }],
+                    max_tokens: 100
+                })
+            });
 
-        const data = await response.json();
-        const reply = data.choices[0].message.content;
-        responseDiv.innerText = reply;
-        speak(reply);
+            const data = await response.json();
+            const reply = data.choices[0]?.message?.content || "Sorry Boss, I couldn't understand that.";
+            responseDiv.innerText = reply;
+            responseDiv.classList.remove("thinking");
+            speak(reply);
+        } catch (error) {
+            responseDiv.innerText = "Chuck is offline...";
+            responseDiv.classList.remove("thinking");
+        }
     }
 
     function speak(text) {
@@ -88,6 +102,11 @@
             document.getElementById("command").value = command;
             askChuck();
         };
+        recognition.onend = startListening; // Auto restart voice listening
+    }
+
+    window.onload = function() {
+        startListening();
     }
 </script>
 </body>
