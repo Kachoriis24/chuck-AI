@@ -83,9 +83,8 @@
             responseDiv.classList.remove("thinking");
             speak(reply);
         } catch (error) {
-            responseDiv.innerText = "Chuck is offline... Auto reconnecting...";
+            responseDiv.innerText = "Chuck is offline...";
             responseDiv.classList.remove("thinking");
-            setTimeout(startListening, 5000);
         }
     }
 
@@ -104,7 +103,7 @@
             askChuck();
         };
         recognition.onend = function() {
-            setTimeout(startListening, 1000);
+            startListening();
         };
     }
 
