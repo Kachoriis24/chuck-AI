@@ -83,8 +83,9 @@
             responseDiv.classList.remove("thinking");
             speak(reply);
         } catch (error) {
-            responseDiv.innerText = "Chuck is offline...";
+            responseDiv.innerText = "Chuck is offline... Please wait, I will reconnect automatically.";
             responseDiv.classList.remove("thinking");
+            setTimeout(startListening, 5000); // Automatic reconnect after 5 seconds
         }
     }
 
@@ -102,7 +103,9 @@
             document.getElementById("command").value = command;
             askChuck();
         };
-        recognition.onend = startListening; // Auto restart voice listening
+        recognition.onend = function() {
+            setTimeout(startListening, 1000); // Auto restart voice listening
+        };
     }
 
     window.onload = function() {
